@@ -1,4 +1,4 @@
-import bcript from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import cloudinary from "../lib/cloudinary.js";
@@ -22,8 +22,8 @@ export const signup = async (req, res) => {
       return res.status(400).send("User already exists.");
     }
 
-    const salt = await bcript.genSalt(10);
-    const hashPassword = await bcript.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
 
     const newUser = await User.create({
       fullName,
@@ -52,7 +52,6 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
 
@@ -60,11 +59,11 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const isPasswordCorrect = await bcript.compare(password, user.password);
-
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+
     generateToken(user._id, res);
 
     res.status(200).json({
@@ -75,7 +74,7 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in login controller", error.message);
-    req.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
