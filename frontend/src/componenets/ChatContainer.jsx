@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useChatStore } from "../store/useChatStore";
 import { formatMessageTime } from "../lib/utils";
+import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -13,22 +13,20 @@ const ChatContainer = () => {
     isMessagesLoading,
     selectedUser,
     subscribeToMessages,
-    unsubscribeFromMessages,
+    unSubscribeFromMessages,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
     getMessages(selectedUser._id);
-
-    // subscribeToMessages();
-
-    // return () => unsubscribeFromMessages();
+    subscribeToMessages();
+    return () => unSubscribeFromMessages();
   }, [
     selectedUser._id,
     getMessages,
-    // subscribeToMessages,
-    // unsubscribeFromMessages,
+    subscribeToMessages,
+    unSubscribeFromMessages,
   ]);
 
   useEffect(() => {
